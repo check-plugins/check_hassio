@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+#
+# Home Assistant sensor plugin for Nagios/Icinga
+#
+# (c) Gerrit Beine, 2019
+#
+
+import argparse
+import requests
+import json
+import time
+import sys
+
+status = 0
+message = ''
+args = {}
+
+nagios_codes = [ 'OK', 'WARNING', 'CRITICAL', 'UNKNOWN' ]
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-H', '--host', metavar="<hostname>", help="host to connect to (defaults to localhost)", dest='host', default="localhost")
+parser.add_argument('-P', '--port', metavar="<port>", help="network port to connect to (defaults to 1883)", dest='port', default=8123, type=int)
+parser.add_argument('-t', '--token', metavar="<token>", help="API token (defaults to None)", dest='token', default=None)
+parser.add_argument('-s', '--sensor', metavar="<sensor>", help="Sensor id (default to None)", dest='sensor', default=None)
+parser.add_argument('-S', '--ssl', help="use HTTPS", dest='ssl', default=False, action='store_true')
+parser.add_argument('-I', '--int', help="Use state as int", dest='int', default=False, action='store_true')
+parser.add_argument('-F', '--float', help="Use state as float", dest='float', default=False, action='store_true')
+parser.add_argument('-T', '--timestamp', help="Use state as timestamp", dest='timestamp', default=False, action='store_true')
+parser.add_argument('-e', '--expected', help="Check expected state (default to None)", dest='expected', default=None)
+
+args = parser.parse_args()
+
+if args.ssl:
+    url = "https"
+else:
+    url = "http"
+
+url += "://" + args.host + ":" + str(args.port) + "/api/"
+
+if args.sensor:
+    url += "states/" + args.sensor
+
+headers = {
+    "Authorization": "Bearer " + args.token,
+}
+
+response = requests.request("GET", url, headers=headers)
+
+data = json.loads(response.text)
+
+if args.int:
+    status = 3
+    message = "Not yet supported"
+elif args.float:
+    status = 3
+    message = "Not yet supported"
+elif args.timestamp:
+    time = int(time.time())
+    if args.expected is None:
+        interval = 20
+    else:
+        interval = int(args.expected)
+    if int(data['state']) > time - interval:
+        status = 0
+        message = "Timestamp is {}".format(data['state'])
+    else:
+        status = 2
+        message = "Timestamp is {}, expected {} {}".format(data['state'], time, interval)
+else:
+    if data['state'] == args.expected:
+        status = 0
+        message = "State is {}".format(data['state'])
+    else:
+        status = 2
+        message = "State is {}, expected {}".format(data['state'], args.expected)
+
+print("{} - {}".format(nagios_codes[status], message))
+
+sys.exit(status)
+
