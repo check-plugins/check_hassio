@@ -27,8 +27,36 @@ parser.add_argument('-I', '--int', help="Use state as int", dest='int', default=
 parser.add_argument('-F', '--float', help="Use state as float", dest='float', default=False, action='store_true')
 parser.add_argument('-T', '--timestamp', help="Use state as timestamp", dest='timestamp', default=False, action='store_true')
 parser.add_argument('-e', '--expected', help="Check expected state (default to None)", dest='expected', default=None)
+parser.add_argument('-w', '--warning', help="Check if above threshold (warning, default to None)", dest='warning', default=None, type=float)
+parser.add_argument('-c', '--critical', help="Check if above threshold (critical, default to None)", dest='critical', default=None, type=float)
+parser.add_argument('-W', '--warning-below', help="Check if below threshold (warning, default to None)", dest='bwarning', default=None, type=float)
+parser.add_argument('-C', '--critical-below', help="Check if below threshold (critical, default to None)", dest='bcritical', default=None, type=float)
+parser.add_argument('-r', '--range', help="Check if in range [from:to] (default to None)", dest='range', default=None)
 
 args = parser.parse_args()
+
+if (args.warning and args.bwarning) or (args.critical and args.bcritical):
+    print("Please specify only values for checking above or below thresholds.")
+    sys.exit(3)
+if args.warning and not args.critical:
+    print("Checking for threshold requires values for --warning and --cricital.")
+    sys.exit(3)
+if not args.warning and args.critical:
+    print("Checking for threshold requires values for --warning and --cricital.")
+    sys.exit(3)
+if args.bwarning and not args.bcritical:
+    print("Checking for threshold requires values for --warning-below and --cricital-below.")
+    sys.exit(3)
+if not args.bwarning and args.bcritical:
+    print("Checking for threshold requires values for --warning-below and --cricital-below.")
+    sys.exit(3)
+if args.range:
+    borders = args.range.split(":")
+    if len(borders) != 2:
+        print("Checking for a range requires two numbers, e.g. '10:23'")
+        sys.exit(3)
+    args.range_upper = float(borders[1])
+    args.range_lower = float(borders[0])
 
 if args.ssl:
     url = "https"
@@ -48,12 +76,47 @@ response = requests.request("GET", url, headers=headers)
 
 data = json.loads(response.text)
 
-if args.int:
-    status = 3
-    message = "Not yet supported"
-elif args.float:
-    status = 3
-    message = "Not yet supported"
+if args.int or args.float:
+    if args.int:
+        state = int(data['state'])
+    elif args.float:
+        state = float(data['state'])
+
+    # test if value is above thresholds
+    if args.warning and args.warning > state:
+        status = 0
+        message = "State is {}".format(data['state'])
+    elif args.critical and args.critical > state:
+        status = 1
+        message = "State {} is above {}".format(data['state'], args.warning)
+    elif args.critical and args.critical <= state:
+        status = 2
+        message = "State {} is above {}".format(data['state'], args.critical)
+
+    # test if value is below thresholds
+    elif args.bwarning and args.bwarning < state:
+        status = 0
+        message = "State is {}".format(data['state'])
+    elif args.bcritical and args.bcritical < state:
+        status = 1
+        message = "State {} is below {}".format(data['state'], args.bwarning)
+    elif args.bcritical and args.bcritical >= state:
+        status = 2
+        message = "State {} is below {}".format(data['state'], args.bcritical)
+
+    # test if value is in range
+    elif args.range:
+        if args.range_lower <= state <= args.range_upper:
+            status = 0
+            message = "State is {}".format(data['state'])
+        else:
+            status = 2
+            message = "State {} is out of range {}".format(data['state'], args.range)
+
+    else:
+        status = 3
+        message = "No thresholds or range defined fo state {}".format(data['state'])
+
 elif args.timestamp:
     time = int(time.time())
     if args.expected is None:
@@ -66,6 +129,7 @@ elif args.timestamp:
     else:
         status = 2
         message = "Timestamp is {}, expected {} {}".format(data['state'], time, interval)
+
 else:
     if data['state'] == args.expected:
         status = 0

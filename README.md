@@ -30,6 +30,8 @@ apt-get install python3-requests
 ```
 usage: check_hassio [-h] [-H <hostname>] [-P <port>] [-t <token>]
                     [-s <sensor>] [-S] [-I] [-F] [-T] [-e EXPECTED]
+                    [-w WARNING] [-c CRITICAL] [-W BWARNING] [-C BCRITICAL]
+                    [-r RANGE]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -47,6 +49,16 @@ optional arguments:
   -T, --timestamp       Use state as timestamp
   -e EXPECTED, --expected EXPECTED
                         Check expected state (default to None)
+  -w WARNING, --warning WARNING
+                        Check if above threshold (warning, default to None)
+  -c CRITICAL, --critical CRITICAL
+                        Check if above threshold (critical, default to None)
+  -W BWARNING, --warning-below BWARNING
+                        Check if below threshold (warning, default to None)
+  -C BCRITICAL, --critical-below BCRITICAL
+                        Check if below threshold (critical, default to None)
+  -r RANGE, --range RANGE
+                        Check if in range [from:to] (default to None)
 ```
 
 ## Example
@@ -63,6 +75,24 @@ The result is interpreted as string and is critical if it not matches "Welt!".
 
 ```
 ./check_hassio -H hassio.my.home -t "token" -s "sensor.hallo" -e "Welt!"
+```
+
+Test for sensor value if it is above certain thresholds
+
+```
+./check_hassio -H hassio.my.home -t "token" -s "sensor.temperature" -F -w 20 -c 30
+```
+
+Test for sensor value if it is below certain thresholds
+
+```
+./check_hassio -H hassio.my.home -t "token" -s "sensor.temperature" -F -W 10 -C 0
+```
+
+Test for sensor value to be in a certain range
+
+```
+./check_hassio -H hassio.my.home -t "token" -s "sensor.temperature" -F -r "5:15"
 ```
 
 ## Support
