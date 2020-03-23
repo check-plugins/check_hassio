@@ -25,7 +25,7 @@ It can be installed on Debian by running:
 apt-get install python3-requests
 ```
 
-## Paramters
+## Parameters
 
 ```
 usage: check_hassio [-h] [-H <hostname>] [-P <port>] [-t <token>]
