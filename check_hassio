@@ -27,6 +27,7 @@ parser.add_argument('-I', '--int', help="Use state as int", dest='int', default=
 parser.add_argument('-F', '--float', help="Use state as float", dest='float', default=False, action='store_true')
 parser.add_argument('-T', '--timestamp', help="Use state as timestamp", dest='timestamp', default=False, action='store_true')
 parser.add_argument('-e', '--expected', help="Check expected state (default to None)", dest='expected', default=None)
+parser.add_argument('-n', '--notexpected', help="Check not expected state (default to None)", dest='notexpected', default=None)
 parser.add_argument('-w', '--warning', help="Check if above threshold (warning, default to None)", dest='warning', default=None, type=float)
 parser.add_argument('-c', '--critical', help="Check if above threshold (critical, default to None)", dest='critical', default=None, type=float)
 parser.add_argument('-W', '--warning-below', help="Check if below threshold (warning, default to None)", dest='bwarning', default=None, type=float)
@@ -129,6 +130,14 @@ elif args.timestamp:
     else:
         status = 2
         message = "Timestamp is {}, expected {} {}".format(data['state'], time, interval)
+
+elif args.notexpected:
+    if data['state'] != args.notexpected:
+        status = 0
+        message = "State is {}".format(data['state'])
+    else:
+        status = 2
+        message = "State is {}, not expected {}".format(data['state'], args.notexpected)
 
 else:
     if data['state'] == args.expected:
