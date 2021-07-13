@@ -50,7 +50,7 @@ optional arguments:
   -e EXPECTED, --expected EXPECTED
                         Check expected state (default to None)
   -n NOTEXPECTED, --notexpected NOTEXPECTED
-                        Check expected state (default to None)
+                        Check not expected state (default to None)
   -w WARNING, --warning WARNING
                         Check if above threshold (warning, default to None)
   -c CRITICAL, --critical CRITICAL
