@@ -19,7 +19,7 @@ nagios_codes = [ 'OK', 'WARNING', 'CRITICAL', 'UNKNOWN' ]
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-H', '--host', metavar="<hostname>", help="host to connect to (defaults to localhost)", dest='host', default="localhost")
-parser.add_argument('-P', '--port', metavar="<port>", help="network port to connect to (defaults to 1883)", dest='port', default=8123, type=int)
+parser.add_argument('-P', '--port', metavar="<port>", help="network port to connect to (defaults to 8123)", dest='port', default=8123, type=int)
 parser.add_argument('-t', '--token', metavar="<token>", help="API token (defaults to None)", dest='token', default=None)
 parser.add_argument('-s', '--sensor', metavar="<sensor>", help="Sensor id (default to None)", dest='sensor', default=None)
 parser.add_argument('-S', '--ssl', help="use HTTPS", dest='ssl', default=False, action='store_true')
