@@ -29,7 +29,7 @@ apt-get install python3-requests
 
 ```
 usage: check_hassio [-h] [-H <hostname>] [-P <port>] [-t <token>]
-                    [-s <sensor>] [-S] [-I] [-F] [-T] [-e EXPECTED]
+                    [-s <sensor>] [-S] [-I] [-F] [-T] [-e EXPECTED] [-n NOTEXPECTED]
                     [-w WARNING] [-c CRITICAL] [-W BWARNING] [-C BCRITICAL]
                     [-r RANGE]
 
@@ -38,7 +38,7 @@ optional arguments:
   -H <hostname>, --host <hostname>
                         host to connect to (defaults to localhost)
   -P <port>, --port <port>
-                        network port to connect to (defaults to 1883)
+                        network port to connect to (defaults to 8123)
   -t <token>, --token <token>
                         API token (defaults to None)
   -s <sensor>, --sensor <sensor>
@@ -48,6 +48,8 @@ optional arguments:
   -F, --float           Use state as float
   -T, --timestamp       Use state as timestamp
   -e EXPECTED, --expected EXPECTED
+                        Check expected state (default to None)
+  -n NOTEXPECTED, --notexpected NOTEXPECTED
                         Check expected state (default to None)
   -w WARNING, --warning WARNING
                         Check if above threshold (warning, default to None)
@@ -75,6 +77,12 @@ The result is interpreted as string and is critical if it not matches "Welt!".
 
 ```
 ./check_hassio -H hassio.my.home -t "token" -s "sensor.hallo" -e "Welt!"
+```
+
+The result is interpreted as string and is critical if it matches "unavailable".
+
+```
+./check_hassio -H hassio.my.home -t "token" -s "sensor.hallo" -n "unavailable"
 ```
 
 Test for sensor value if it is above certain thresholds
