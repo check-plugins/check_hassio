@@ -38,7 +38,7 @@ optional arguments:
   -H <hostname>, --host <hostname>
                         host to connect to (defaults to localhost)
   -P <port>, --port <port>
-                        network port to connect to (defaults to 1883)
+                        network port to connect to (defaults to 8123)
   -t <token>, --token <token>
                         API token (defaults to None)
   -s <sensor>, --sensor <sensor>
