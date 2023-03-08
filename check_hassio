@@ -33,6 +33,7 @@ parser.add_argument('-c', '--critical', help="Check if above threshold (critical
 parser.add_argument('-W', '--warning-below', help="Check if below threshold (warning, default to None)", dest='bwarning', default=None, type=float)
 parser.add_argument('-C', '--critical-below', help="Check if below threshold (critical, default to None)", dest='bcritical', default=None, type=float)
 parser.add_argument('-r', '--range', help="Check if in range [from:to] (default to None)", dest='range', default=None)
+parser.add_argument('-j', '--json', help="output JSON", dest='json', default=False, action='store_true')
 
 args = parser.parse_args()
 
@@ -148,6 +149,9 @@ else:
         message = "State is {}, expected {}".format(data['state'], args.expected)
 
 print("{} - {}".format(nagios_codes[status], message))
+
+if args.json:
+   print(data)
 
 sys.exit(status)
 
