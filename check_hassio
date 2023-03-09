@@ -138,11 +138,13 @@ elif args.notexpected:
     notexpected_pattern = re.compile(args.notexpected, re.IGNORECASE)
     # check to see if the notexpected_pattern matches the state
     if re.match(notexpected_pattern, data['state']):
+        status = 2
+        # hide any | from Nagios since that has a special meaning for it
+        escaped_arg = args.notexpected.replace('|', r':')
+        message = "State is {}, not expected {}".format(data['state'], escaped_arg)
+    else:
         status = 0
         message = "State is {}".format(data['state'])
-    else:
-        status = 2
-        message = "State is {}, not expected {}".format(data['state'], args.notexpected)
 
 else:
     # compile the regular expression pattern
@@ -153,7 +155,9 @@ else:
         message = "State is {}".format(data['state'])
     else:
         status = 2
-        message = "State is {}, expected {}".format(data['state'], args.expected)
+        # hide any | from Nagios since that has a special meaning for it
+        escaped_arg = args.expected.replace('|', r':')
+        message = "State is {}, expected {}".format(data['state'], escaped_arg)
 
 print("{} - {}".format(nagios_codes[status], message))
 
