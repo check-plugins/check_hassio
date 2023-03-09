@@ -26,6 +26,7 @@ parser.add_argument('-s', '--sensor', metavar="<sensor>", help="Sensor id (defau
 parser.add_argument('-S', '--ssl', help="use HTTPS", dest='ssl', default=False, action='store_true')
 parser.add_argument('-I', '--int', help="Use state as int", dest='int', default=False, action='store_true')
 parser.add_argument('-F', '--float', help="Use state as float", dest='float', default=False, action='store_true')
+parser.add_argument('-u', '--unit', help="A valid Nagios unit of the state - for performance data (defaults to '') ", dest='unit', default='', type=str)
 parser.add_argument('-T', '--timestamp', help="Use state as timestamp", dest='timestamp', default=False, action='store_true')
 parser.add_argument('-e', '--expected', help="Check expected state (default to None). Case-insensitive regular expressions can be used", dest='expected', default=None, type=str)
 parser.add_argument('-n', '--notexpected', help="Check not expected state (default to None). Case-insensitive regular expressions can be used", dest='notexpected', default=None, type=str)
@@ -79,42 +80,47 @@ response = requests.request("GET", url, headers=headers)
 
 data = json.loads(response.text)
 
+perf_data_output=""
+
 if args.int or args.float:
     if args.int:
         state = int(data['state'])
     elif args.float:
         state = float(data['state'])
 
+    # this type of value can be used to provide performance data for nagios
+    perf_data_output="|'" + args.sensor + "'=" + data['state'] + args.unit
+
     # test if value is above thresholds
     if args.warning and args.warning > state:
         status = 0
-        message = "State is {}".format(data['state'])
+        message = "State is {}{}".format(data['state'], perf_data_output)
     elif args.critical and args.critical > state:
         status = 1
-        message = "State {} is above {}".format(data['state'], args.warning)
+        message = "State {} is above {}{}".format(data['state'], args.warning, perf_data_output)
     elif args.critical and args.critical <= state:
         status = 2
-        message = "State {} is above {}".format(data['state'], args.critical)
+        message = "State {} is above {}{}".format(data['state'], args.critical, perf_data_output)
 
     # test if value is below thresholds
     elif args.bwarning and args.bwarning < state:
         status = 0
-        message = "State is {}".format(data['state'])
+        message = "State is {}{}".format(data['state'], perf_data_output)
     elif args.bcritical and args.bcritical < state:
         status = 1
-        message = "State {} is below {}".format(data['state'], args.bwarning)
+        message = "State {} is below {}{}".format(data['state'], args.bwarning, perf_data_output)
     elif args.bcritical and args.bcritical >= state:
         status = 2
-        message = "State {} is below {}".format(data['state'], args.bcritical)
+        message = "State {} is below {}{}".format(data['state'], args.bcritical, perf_data_output)
 
     # test if value is in range
     elif args.range:
         if args.range_lower <= state <= args.range_upper:
             status = 0
-            message = "State is {}".format(data['state'])
+            message = "State is {}{}".format(data['state'], perf_data_output)
         else:
             status = 2
-            message = "State {} is out of range {}".format(data['state'], args.range)
+            message = "State {} is out of range {}{}".format(data['state'], args.range, perf_data_output)
 
     else:
         status = 3

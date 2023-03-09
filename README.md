@@ -29,9 +29,10 @@ apt-get install python3-requests
 
 ```
 usage: check_hassio [-h] [-H <hostname>] [-P <port>] [-t <token>]
-                    [-s <sensor>] [-S] [-I] [-F] [-T] [-e EXPECTED] [-n NOTEXPECTED]
+                    [-s <sensor>] [-S] [-I] [-F] [-T] [-e EXPECTED] [-n NOTEXPECTED] [-u UNIT]
                     [-w WARNING] [-c CRITICAL] [-W BWARNING] [-C BCRITICAL]
-                    [-r RANGE] [-j]
+                    [-r RANGE]
+                    [-j]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -46,6 +47,7 @@ optional arguments:
   -S, --ssl             use HTTPS
   -I, --int             Use state as int
   -F, --float           Use state as float
+  -u UNIT, --unit UNIT  A valid Nagios unit of the state - for performance data (defaults to '')  
   -T, --timestamp       Use state as timestamp
   -e EXPECTED, --expected EXPECTED
                         Check expected state (default to None). Case-insensitive regular expressions can be used
