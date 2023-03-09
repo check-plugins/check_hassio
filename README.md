@@ -48,9 +48,9 @@ optional arguments:
   -F, --float           Use state as float
   -T, --timestamp       Use state as timestamp
   -e EXPECTED, --expected EXPECTED
-                        Check expected state (default to None)
+                        Check expected state (default to None). Case-insensitive regular expressions can be used
   -n NOTEXPECTED, --notexpected NOTEXPECTED
-                        Check not expected state (default to None)
+                        Check not expected state (default to None). Case-insensitive  regular expressions can be used
   -w WARNING, --warning WARNING
                         Check if above threshold (warning, default to None)
   -c CRITICAL, --critical CRITICAL
@@ -74,10 +74,16 @@ The result is interpreted as timestamp and is critical if it is older than 30 se
 ```
 
 Query hassio.my.home running on port 80 for sensor hallo.
-The result is interpreted as string and is critical if it not matches "Welt!".
+The result is interpreted as string and is critical if it does not match "Welt!".
 
 ```
 ./check_hassio -H hassio.my.home -t "token" -s "sensor.hallo" -e "Welt!"
+```
+
+The result is interpreted as string and is critical if it does not match "Welt" or "Working".
+
+```
+./check_hassio -H hassio.my.home -t "token" -s "sensor.hallo" -e "Welt|Working"
 ```
 
 The result is interpreted as string and is critical if it matches "unavailable".
