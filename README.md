@@ -32,7 +32,7 @@ usage: check_hassio [-h] [-H <hostname>] [-P <port>] [-t <token>]
                     [-s <sensor>] [-S] [-I] [-F] [-T] [-e EXPECTED] [-n NOTEXPECTED] [-u UNIT]
                     [-w WARNING] [-c CRITICAL] [-W BWARNING] [-C BCRITICAL]
                     [-r RANGE]
-                    [-j]
+                    [-R]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -63,7 +63,7 @@ optional arguments:
                         Check if below threshold (critical, default to None)
   -r RANGE, --range RANGE
                         Check if in range [from:to] (default to None)
-  -j, --json            Add JSON to the end of the output
+  -R, --raw             Add the raw JSON to the end of the output
 ```
 
 ## Example
