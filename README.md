@@ -29,7 +29,7 @@ apt-get install python3-requests
 
 ```
 usage: check_hassio [-h] [-H <hostname>] [-P <port>] [-t <token>]
-                    [-s <sensor>] [-S] [-I] [-F] [-T] [-e EXPECTED] [-n NOTEXPECTED]
+                    [-s <sensor>] [-S] [-I] [-F] [-T] [-R] [-e EXPECTED] [-n NOTEXPECTED]
                     [-w WARNING] [-c CRITICAL] [-W BWARNING] [-C BCRITICAL]
                     [-r RANGE]
                     [-v]
@@ -48,6 +48,7 @@ optional arguments:
   -I, --int             Use state as int
   -F, --float           Use state as float
   -T, --timestamp       Use state as timestamp
+  -R, --regex           Use expected or notexpected value as regular expression
   -e EXPECTED, --expected EXPECTED
                         Check expected state (default to None)
   -n NOTEXPECTED, --notexpected NOTEXPECTED
