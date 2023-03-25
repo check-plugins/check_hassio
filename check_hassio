@@ -140,13 +140,17 @@ elif args.notexpected:
         status = 2
         message = "State is {}, not expected {}".format(data['state'], args.notexpected)
 
-else:
+elif args.expected:
     if data['state'] == args.expected:
         status = 0
         message = "State is {}".format(data['state'])
     else:
         status = 2
         message = "State is {}, expected {}".format(data['state'], args.expected)
+
+else:
+    status = 3
+    message = "No expectations specified for {}".format(data['state'])
 
 print("{} - {}".format(nagios_codes[status], message))
 
