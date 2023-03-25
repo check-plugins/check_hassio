@@ -32,6 +32,7 @@ usage: check_hassio [-h] [-H <hostname>] [-P <port>] [-t <token>]
                     [-s <sensor>] [-S] [-I] [-F] [-T] [-e EXPECTED] [-n NOTEXPECTED]
                     [-w WARNING] [-c CRITICAL] [-W BWARNING] [-C BCRITICAL]
                     [-r RANGE]
+                    [-v]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -61,6 +62,7 @@ optional arguments:
                         Check if below threshold (critical, default to None)
   -r RANGE, --range RANGE
                         Check if in range [from:to] (default to None)
+  -v, --verbose         Verbose mode: show the response data
 ```
 
 ## Example
